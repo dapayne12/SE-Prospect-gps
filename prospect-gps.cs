@@ -147,32 +147,7 @@ List<IMyInventory> inventories = new List<IMyInventory>();
 List<GPSCoordinate> coordinates = new List<GPSCoordinate>();
 
 public Program() {
-    List<IMyTextPanel> panels = new List<IMyTextPanel>();
-    GridTerminalSystem.GetBlocksOfType(panels, block => block.IsSameConstructAs(Me));
-    foreach (IMyTextPanel panel in panels) {
-        if (panel.CustomName.Contains(OUTPUT_GPS_TOKEN)) {
-            outputPanel = panel;
-            outputPanel.ContentType = ContentType.TEXT_AND_IMAGE;
-            break;
-        }
-    }
-
-    if (outputPanel == null) {
-        throw new Exception("Output GPS panel not found");
-    }
-
-    StringBuilder builder = new StringBuilder();
-    outputPanel.ReadText(builder);
-    string panelText = builder.ToString();
-    foreach (string line in panelText.Split('\n')) {
-        string trimmedLine = line.Trim();
-        if (trimmedLine.StartsWith("GPS:")) {
-            GPSCoordinate coordinate = ParseGPSLine(trimmedLine);
-            if (coordinate != null) {
-                coordinates.Add(coordinate);
-            }
-        }
-    }
+    FindOutputLCD();
 
     List<IMyEntity> entitiesWithInventory = new List<IMyEntity>();
     GridTerminalSystem.GetBlocksOfType(entitiesWithInventory, entity => entity.HasInventory);
@@ -202,10 +177,18 @@ public void Main(string argument) {
         return;
     }
 
+    if (outputPanel == null) {
+        bool found = FindOutputLCD();
+        if (!found) {
+            return;
+        }
+    }
+
     Dictionary<MyItemType, long> oreCount = GetOreCount();
     Dictionary<MyItemType, long> newOre = GetNewOre(oreCount);
 
     if (newOre.Keys.Count == 0) {
+        OutputCoordinates();
         return;
     }
 
@@ -272,6 +255,10 @@ private GPSCoordinate GetGPSCoordinate() {
 }
 
 private void OutputCoordinates() {
+    if (outputPanel == null) {
+        return;
+    }
+
     string output = $"{DateTime.UtcNow}\n\n";
     foreach (GPSCoordinate coordinate in coordinates) {
         output += $"{coordinate}\n";
@@ -334,4 +321,36 @@ private MyItemType GetOreTypeFromSymbol(string symbol) {
     }
 
     throw new Exception($"No ore type found for symbol: {symbol}");
+}
+
+private bool FindOutputLCD() {
+    List<IMyTextPanel> panels = new List<IMyTextPanel>();
+    GridTerminalSystem.GetBlocksOfType(panels, block => block.IsSameConstructAs(Me));
+    bool found = false;
+    foreach (IMyTextPanel panel in panels) {
+        if (panel.CustomName.Contains(OUTPUT_GPS_TOKEN)) {
+            outputPanel = panel;
+            outputPanel.ContentType = ContentType.TEXT_AND_IMAGE;
+            found = true;
+            break;
+        }
+    }
+
+    if (found) {
+        coordinates = new List<GPSCoordinate>();
+        StringBuilder builder = new StringBuilder();
+        outputPanel.ReadText(builder);
+        string panelText = builder.ToString();
+        foreach (string line in panelText.Split('\n')) {
+            string trimmedLine = line.Trim();
+            if (trimmedLine.StartsWith("GPS:")) {
+                GPSCoordinate coordinate = ParseGPSLine(trimmedLine);
+                if (coordinate != null) {
+                    coordinates.Add(coordinate);
+                }
+            }
+        }
+    }
+
+    return found;
 }
