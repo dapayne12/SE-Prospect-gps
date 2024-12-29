@@ -146,7 +146,10 @@ IMyTextPanel outputPanel = null;
 List<IMyInventory> inventories = new List<IMyInventory>();
 List<GPSCoordinate> coordinates = new List<GPSCoordinate>();
 
+DateTime initTime = DateTime.UtcNow;
 public Program() {
+    initTime = DateTime.UtcNow;
+
     FindOutputLCD();
 
     List<IMyEntity> entitiesWithInventory = new List<IMyEntity>();
@@ -259,7 +262,8 @@ private void OutputCoordinates() {
         return;
     }
 
-    string output = $"{DateTime.UtcNow}\n\n";
+    string output = $"Init: {initTime}\n";
+    output += $"{DateTime.UtcNow}\n\n";
     foreach (GPSCoordinate coordinate in coordinates) {
         output += $"{coordinate}\n";
     }
