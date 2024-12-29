@@ -167,6 +167,13 @@ public Program() {
 DateTime nextRunTime = DateTime.UtcNow;
 public void Main(string argument) {
     if (argument == "RESET") {
+        if (outputPanel != null) {
+            string message = $"RESET command: {DateTime.UtcNow}\n" +
+                $"Init time: {initTime}\n" +
+                $"{ReadTextFromLCD(outputPanel)}\n\n";
+            outputPanel.CustomData += message;
+        }
+
         lastOreCount = GetOreCount();
         coordinates = new List<GPSCoordinate>();
         OutputCoordinates();
@@ -341,10 +348,15 @@ private bool FindOutputLCD() {
     }
 
     if (found) {
+        string panelText = ReadTextFromLCD(outputPanel);
+        if (outputPanel != null) {
+            string message = $"FindOutputLCD: {DateTime.UtcNow}\n" +
+                $"Init time: {initTime}\n" +
+                $"{panelText}\n\n";
+            outputPanel.CustomData += message;
+        }
+
         coordinates = new List<GPSCoordinate>();
-        StringBuilder builder = new StringBuilder();
-        outputPanel.ReadText(builder);
-        string panelText = builder.ToString();
         foreach (string line in panelText.Split('\n')) {
             string trimmedLine = line.Trim();
             if (trimmedLine.StartsWith("GPS:")) {
@@ -357,4 +369,10 @@ private bool FindOutputLCD() {
     }
 
     return found;
+}
+
+private string ReadTextFromLCD(IMyTextPanel textPanel) {
+    StringBuilder builder = new StringBuilder();
+    textPanel.ReadText(builder);
+    return builder.ToString();
 }
