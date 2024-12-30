@@ -23,6 +23,9 @@ static readonly long COORDINATE_RANGE_METERS = 3000;
 // Aproximate number of seconhds between each update.
 static readonly int SECONDS_BETWEEN_UPDATE = 30;
 
+// All coordinates will be this colour.
+static readonly string DEFAULT_GPS_COLOUR = "#FF9C00";
+
 //////////////////////////////////////////////////////////////
 /// End of configuration. No modifications beyond this point.
 //////////////////////////////////////////////////////////////
@@ -112,7 +115,7 @@ class GPSCoordinate {
             }
             coordinate += $"{ORE_SYMBOLS[type]} ({FormatAmount(ores[type])})";
         }
-        coordinate += $":{location.X}:{location.Y}:{location.Z}:#FF75C9F1::";
+        coordinate += $":{location.X}:{location.Y}:{location.Z}:{DEFAULT_GPS_COLOUR}::";
 
         return coordinate;
     }
@@ -145,6 +148,7 @@ class GPSCoordinate {
 IMyTextPanel outputPanel = null;
 List<IMyInventory> inventories = new List<IMyInventory>();
 List<GPSCoordinate> coordinates = new List<GPSCoordinate>();
+List<string> badLines = new List<string>();
 
 DateTime initTime = DateTime.UtcNow;
 public Program() {
@@ -167,15 +171,9 @@ public Program() {
 DateTime nextRunTime = DateTime.UtcNow;
 public void Main(string argument) {
     if (argument == "RESET") {
-        if (outputPanel != null) {
-            string message = $"RESET command: {DateTime.UtcNow}\n" +
-                $"Init time: {initTime}\n" +
-                $"{ReadTextFromLCD(outputPanel)}\n\n";
-            outputPanel.CustomData += message;
-        }
-
         lastOreCount = GetOreCount();
         coordinates = new List<GPSCoordinate>();
+        badLines = new List<string>();
         OutputCoordinates();
         return;
     }
@@ -274,6 +272,14 @@ private void OutputCoordinates() {
     foreach (GPSCoordinate coordinate in coordinates) {
         output += $"{coordinate}\n";
     }
+
+    if (badLines.Count > 0) {
+        output += $"\nBad coordinates:\n";
+        foreach (string badLine in badLines) {
+            output += $"{badLine}\n";
+        }
+    }
+
     outputPanel.WriteText(output);
 }
 
@@ -348,31 +354,27 @@ private bool FindOutputLCD() {
     }
 
     if (found) {
-        string panelText = ReadTextFromLCD(outputPanel);
-        if (outputPanel != null) {
-            string message = $"FindOutputLCD: {DateTime.UtcNow}\n" +
-                $"Init time: {initTime}\n" +
-                $"{panelText}\n\n";
-            outputPanel.CustomData += message;
-        }
+        StringBuilder builder = new StringBuilder();
+        outputPanel.ReadText(builder);
+        string panelText = builder.ToString();
 
-        coordinates = new List<GPSCoordinate>();
+        List<string> newBadLines = new List<string>();
+        List<GPSCoordinate> newCoordinates = new List<GPSCoordinate>();
         foreach (string line in panelText.Split('\n')) {
             string trimmedLine = line.Trim();
             if (trimmedLine.StartsWith("GPS:")) {
                 GPSCoordinate coordinate = ParseGPSLine(trimmedLine);
                 if (coordinate != null) {
-                    coordinates.Add(coordinate);
+                    newCoordinates.Add(coordinate);
+                } else {
+                    newBadLines.Add(trimmedLine);
                 }
             }
         }
+
+        coordinates = newCoordinates;
+        badLines = newBadLines;
     }
 
     return found;
-}
-
-private string ReadTextFromLCD(IMyTextPanel textPanel) {
-    StringBuilder builder = new StringBuilder();
-    textPanel.ReadText(builder);
-    return builder.ToString();
 }
