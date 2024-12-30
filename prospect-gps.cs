@@ -297,7 +297,7 @@ private GPSCoordinate ParseGPSLine(string gpsLine) {
         Dictionary<MyItemType, long> ores = new Dictionary<MyItemType, long>();
         string[] oresString = gpsName.Split(',');
         foreach (string oreString in oresString) {
-            string[] oreTokens = oreString.Split(' ');
+            string[] oreTokens = oreString.Trim().Split(' ');
 
             string oreSymbol = oreTokens[0].Trim();
             MyItemType ore = GetOreTypeFromSymbol(oreSymbol);
