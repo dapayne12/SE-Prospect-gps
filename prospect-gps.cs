@@ -1,16 +1,26 @@
-// Usage:
-// Build an LCD with [PROSPECT-GPS] in its name. Recompile the script after
-// building the panel to ensure it's detected. As you mine asteroids GPS
-// coordinates will be added to the panel. The coordinate names will contain
-// resource type and sizes.
-//
-// IMPORTANT! If you re-mine an astroid that already has an entry in the GPS
-// then the new ore amounts will be added to the existing ore amounts. This is
-// probably undesirable.
-//
-// Run the script with the argument "RESET" to remove all GPS coordinates from
-// memory and the LCD. Removing coordinates from LCD only is not enough, the
-// coordinates will still exist in the scirpt memory.
+/*
+MIT License
+
+Copyright (c) 2024 David Payne
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 // Output will be saved to the first LCD screen found that contains
 // this string in its name.
