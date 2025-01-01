@@ -15,13 +15,13 @@ Init: 12/30/2024 22:14:50
 ```
 
 Both timestamps are UTC. The init line keeps track of when last the script was
-loaded into the LCD block. The second timestamp should update aproximately
+loaded into the LCD block. The second timestamp should update approximately
 every 30 seconds.
 
 # Using
 
 With the script running. Mine an asteroid. The script keeps track of what type
-of ore, and how much ore is mined in each location. Aproximately every 30
+of ore, and how much ore is mined in each location. Approximately every 30
 seconds the LCD will be updated with the latest GPS coordinates to mark the ore
 locations:
 

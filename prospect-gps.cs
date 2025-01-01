@@ -35,7 +35,7 @@ static readonly string OUTPUT_GPS_TOKEN = "[PROSPECT-GPS]";
 // GPS coordinate.
 static readonly long COORDINATE_RANGE_METERS = 3000;
 
-// Aproximate number of seconhds between each update.
+// Approximate number of seconhds between each update.
 static readonly int SECONDS_BETWEEN_UPDATE = 30;
 
 // All coordinates will be this colour.
