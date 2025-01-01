@@ -1,3 +1,5 @@
+// SE-Prospect-gps
+
 /*
 MIT License
 
@@ -21,6 +23,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+// The latest version of this scirpt is always available on GitHub:
+// https://github.com/dapayne12/SE-Prospect-gps
 
 // Output will be saved to the first LCD screen found that contains
 // this string in its name.
